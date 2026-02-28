@@ -36,7 +36,7 @@ namespace ut
       };
    }
 
-   template <std::size_t Size>
+   export template <std::size_t Size>
    struct fixed_string
    {
       constexpr fixed_string(const char (&str)[Size])
@@ -278,9 +278,9 @@ namespace ut
 
 namespace ut
 {
-   inline struct
+   struct cfg_t
    {
-      struct
+      struct stream_t
       {
          friend constexpr decltype(auto) operator<<([[maybe_unused]] auto& os, [[maybe_unused]] const auto& t)
          {
@@ -288,12 +288,15 @@ namespace ut
             return (std::clog << t);
          }
       } stream;
-      ut::outputter<decltype(stream)> outputter{stream};
+      ut::outputter<stream_t> outputter{stream};
       ut::reporter<decltype(outputter)> reporter{outputter};
       ut::runner<decltype(reporter)> runner{reporter};
-   } cfg;
+   };
 
-   constexpr struct
+   export extern cfg_t cfg;
+   cfg_t cfg{};
+
+   struct expect_fn final
    {
       template <bool Fatal>
       struct eval final
@@ -357,16 +360,18 @@ namespace ut
             return *this;
          }
       };
-   } expect{};
+   };
 
-   struct suite final
+   export inline constexpr expect_fn expect{};
+
+   export struct suite final
    {
       suite(auto&& tests) { tests(); }
    };
 
    namespace detail
    {
-      template <fixed_string Name>
+      export template <fixed_string Name>
       struct test final
       {
          constexpr auto operator=(auto test) const
@@ -376,7 +381,7 @@ namespace ut
          }
       };
 
-      struct runtime_test final
+      export struct runtime_test final
       {
          std::string_view name{};
 
@@ -388,16 +393,16 @@ namespace ut
       };
    }
 
-   constexpr auto test(const std::string_view name) { return detail::runtime_test{name}; }
+   export constexpr auto test(const std::string_view name) { return detail::runtime_test{name}; }
 
-   template <fixed_string Str>
+   export template <fixed_string Str>
    [[nodiscard]] constexpr auto operator""_test()
    {
       return detail::test<Str>{};
    }
 
 #if __cpp_exceptions
-   template <class Callable, class... Args>
+   export template <class Callable, class... Args>
    constexpr auto throws(Callable&& c, Args&&... args)
    {
       try {
@@ -411,4 +416,4 @@ namespace ut
 #endif
 }
 
-using ut::operator""_test;
+export using ut::operator""_test;

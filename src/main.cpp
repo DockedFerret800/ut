@@ -1,8 +1,8 @@
 #ifndef UT_ENABLE_MODULES
-#include "ut/ut.hpp"
-
 #include <exception>
 #include <string_view>
+
+#include "ut/ut.hpp"
 #else
 import ut;
 import std;

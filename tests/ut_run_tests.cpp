@@ -1,7 +1,10 @@
 // Tests for UT_RUN environment variable filtering feature
 // This file is used by CTest to verify the UT_RUN functionality
-
+#ifndef UT_ENABLE_MODULES
 #include "ut/ut.hpp"
+#else
+import ut;
+#endif
 
 using namespace ut;
 

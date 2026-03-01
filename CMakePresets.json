@@ -94,7 +94,8 @@
     },
     {
       "name": "x64-vs-build",
-      "configurePreset": "x64-vs"
+      "configurePreset": "x64-vs",
+      "configuration": "Debug"
     },
     {
       "name": "x64-preview-build",
@@ -113,7 +114,11 @@
     
     {
       "name": "x64-vs-test",
-      "configurePreset": "x64-vs"
+      "configurePreset": "x64-vs",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
     },
     {
       "name": "x64-preview-test",

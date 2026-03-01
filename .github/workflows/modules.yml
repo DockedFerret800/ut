@@ -20,7 +20,9 @@ jobs:
       matrix:
         include:
           - runs_on: windows-2025-vs2026
-            compiler: msvc-14.50
+            compiler: msvc-14.51
+            cc: cl
+            cxx: cl
             configure_preset: "x64"
             build_preset: "x64-build"
             test_preset : "x64-test"
@@ -32,6 +34,8 @@ jobs:
           # test_preset : "linux-debug-test"
           - runs_on: ubuntu-latest
             compiler: clang-18
+            cc: clang
+            cxx: clang++
             configure_preset: "linux-debug"
             build_preset: "linux-debug-build"
             test_preset : "linux-debug-test"
@@ -43,6 +47,9 @@ jobs:
   
     - name: "Build & Test"
       uses: lukka/run-cmake@v10
+      env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
       with:
         configurePreset: ${{ matrix.configure_preset }}
         configurePresetAdditionalArgs: "['-DUT_ENABLE_MODULES=ON']"

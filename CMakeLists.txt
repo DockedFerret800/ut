@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 3.31) # Raise to 4.3 on availability global release and availability in CI/CD
 
 set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444") # Should be removed after 4.3 is released
 
@@ -13,7 +13,7 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-option(UT_ENABLE_MODULES "Enable modules with import std" OFF)
+option(UT_ENABLE_MODULES "Enable modules with import std" ON)
 option(UT_COMPILE_TIME "Enable compile time features" ON)
 
 if (UT_ENABLE_MODULES)

@@ -54,6 +54,24 @@
       }
     },
     {
+      "name": "windows-vs-base",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-vs",
+      "displayName": "x64 (VS generator)",
+      "inherits": "windows-vs-base",
+      "architecture": "x64"
+    },
+    {
       "name": "linux-debug",
       "displayName": "Linux Debug",
       "generator": "Ninja",
@@ -75,6 +93,11 @@
       "configurePreset": "x64"
     },
     {
+      "name": "x64-vs-build",
+      "configurePreset": "x64-vs",
+      "configuration": "Debug"
+    },
+    {
       "name": "x64-preview-build",
       "configurePreset": "x64-preview"
     },
@@ -87,6 +110,15 @@
     {
       "name": "x64-test",
       "configurePreset": "x64"
+    },
+    
+    {
+      "name": "x64-vs-test",
+      "configurePreset": "x64-vs",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
     },
     {
       "name": "x64-preview-test",

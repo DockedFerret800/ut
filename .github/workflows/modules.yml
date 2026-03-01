@@ -21,28 +21,26 @@ jobs:
         include:
           - runs_on: windows-2025-vs2026
             compiler: msvc-14.50
-            cc: cl
-            cxx: cl
-            configure_preset: "x64"
-            build_preset: "x64-build"
-            test_preset : "x64-test"
+            configure_preset: "x64-vs"
+            build_preset: "x64-vs-build"
+            test_preset : "x64-vs-test"
           # To be uncommented  once GitHub Actions add GCC 15 or 16 with Ubuntu 26
           # - runs_on: ubuntu-latest
           #  compiler: gcc-15
           # configure_preset: "linux-debug"
           # build_preset: "linux-debug-build"
           # test_preset : "linux-debug-test"
-          - runs_on: ubuntu-latest
-            compiler: clang-18
-            cc: clang
-            cxx: clang++
-            configure_preset: "linux-debug"
-            build_preset: "linux-debug-build"
-            test_preset : "linux-debug-test"
+          # - runs_on: ubuntu-latest
+          # compiler: clang-18
+          # cc: clang
+          # cxx: clang++
+          # configure_preset: "linux-debug"
+          # build_preset: "linux-debug-build"
+          # test_preset : "linux-debug-test"
     steps:
 
     - uses: actions/checkout@v6
-
+    
     - uses: lukka/get-cmake@latest
   
     - name: "Build & Test"

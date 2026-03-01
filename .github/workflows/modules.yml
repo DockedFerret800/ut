@@ -21,9 +21,9 @@ jobs:
         include:
           - runs_on: windows-2025-vs2026
             compiler: msvc-14.50
-            configure_preset: "x64"
-            build_preset: "x64-build"
-            test_preset : "x64-test"
+            configure_preset: "x64-vs"
+            build_preset: "x64-vs-build"
+            test_preset : "x64-vs-test"
           # To be uncommented  once GitHub Actions add GCC 15 or 16 with Ubuntu 26
           # - runs_on: ubuntu-latest
           #  compiler: gcc-15
@@ -42,8 +42,6 @@ jobs:
     - uses: actions/checkout@v6
     
     - uses: lukka/get-cmake@latest
-
-    - run: $env:VCPKG_ROOT = 'C:\vcpkg' # For lukka/run-cmake@v10 to detect CC and CXX locations
   
     - name: "Build & Test"
       uses: lukka/run-cmake@v10

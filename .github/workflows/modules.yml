@@ -40,13 +40,18 @@ jobs:
     steps:
 
     - uses: actions/checkout@v6
+    
+    - uses: lukka/get-cmake@latest
 
-    - name: Configure CMake
-      run: cmake --preset ${{ matrix.configure_preset }}
-
-    - name: Build
-      run: cmake --build --preset ${{ matrix.build_preset }}
-
-    - name: Test
-      working-directory: build
-      run: ctest --preset ${{ matrix.test_preset }}
+    - run: $env:VCPKG_ROOT = 'C:\vcpkg' # For lukka/run-cmake@v10 to detect CC and CXX locations
+  
+    - name: "Build & Test"
+      uses: lukka/run-cmake@v10
+      env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+      with:
+        configurePreset: ${{ matrix.configure_preset }}
+        configurePresetAdditionalArgs: "['-DUT_ENABLE_MODULES=ON']"
+        buildPreset: ${{ matrix.build_preset }}
+        testPreset: ${{ matrix.test_preset }}

@@ -40,6 +40,10 @@
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
       "toolset": {
         "value": "v145,host=x64,version=14.51"
       }

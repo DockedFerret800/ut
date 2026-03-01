@@ -13,7 +13,7 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-option(UT_ENABLE_MODULES "Enable modules with import std" ON)
+option(UT_ENABLE_MODULES "Enable modules with import std" OFF)
 option(UT_COMPILE_TIME "Enable compile time features" ON)
 
 if (UT_ENABLE_MODULES)

@@ -12,7 +12,7 @@ A simple and fast compiling unit test library.
 
 ### Features
 
-- Single header
+#### Single header
 
 To enable compile time testing, set the option `UT_COMPILE_TIME` to ON. For example:
 ```cmake
@@ -21,7 +21,9 @@ set(UT_COMPILE_TIME ON)
 
 Runtime testing is always enabled.
 
-The library supports C++ modules. To enable, set the option `UT_ENABLE_MODULES` to ON. For example:
+#### Modules support
+
+The library supports C++ 20/23 modules. To enable, set the option `UT_ENABLE_MODULES` to ON. For example:
 ```cmake
 set (UT_ENABLE_MODULES ON)
 ```

@@ -20,7 +20,7 @@ jobs:
       matrix:
         include:
           - runs_on: windows-2025-vs2026
-            compiler: msvc-14.51
+            compiler: msvc-14.50
             cc: cl
             cxx: cl
             configure_preset: "x64"

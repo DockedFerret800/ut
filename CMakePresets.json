@@ -95,7 +95,7 @@
     {
       "name": "x64-vs-build",
       "configurePreset": "x64-vs"
-    }
+    },
     {
       "name": "x64-preview-build",
       "configurePreset": "x64-preview"

@@ -14,7 +14,7 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
 option(UT_ENABLE_MODULES "Enable modules with import std" OFF)
-option(UT_COMPILE_TIME "Enable compile time features" ON)
+option(UT_COMPILE_TIME "Enable compile time features" OFF)
 
 if (UT_ENABLE_MODULES)
     if (NOT CMAKE_GENERATOR MATCHES "Visual Studio") ## Support should be added with 4.4, todo: check when available
@@ -66,7 +66,9 @@ set_property(TARGET ${PROJECT_NAME}_${PROJECT_NAME} PROPERTY EXPORT_NAME ${PROJE
 
 target_include_directories(
    ${PROJECT_NAME}_${PROJECT_NAME} ${warning_guard}
-    INTERFACE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+    INTERFACE
+      "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+      "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)

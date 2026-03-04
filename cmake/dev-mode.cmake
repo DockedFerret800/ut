@@ -78,3 +78,9 @@ set_tests_properties(ut_run_no_match PROPERTIES
    ENVIRONMENT "UT_RUN=nonexistent"
    PASS_REGULAR_EXPRESSION "tests: 0 \\(0 passed"
 )
+
+if (UT_ENABLE_MODULES)
+  add_executable(ut_module_consumer_tests "${PROJECT_SOURCE_DIR}/tests/ut_module_consumer_tests.cpp")
+  target_link_libraries(ut_module_consumer_tests PRIVATE ${PROJECT_NAME}::${PROJECT_NAME})
+  add_test(NAME ut_module_consumer_import COMMAND ut_module_consumer_tests)
+endif()

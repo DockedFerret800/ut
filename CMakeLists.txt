@@ -68,7 +68,7 @@ target_include_directories(
    ${PROJECT_NAME}_${PROJECT_NAME} ${warning_guard}
     INTERFACE
       "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-      "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+      "$<INSTALL_INTERFACE:include>"
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)

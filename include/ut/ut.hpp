@@ -333,6 +333,7 @@ namespace ut
          return log{eval<not detail::fatal>{test_passed, loc}.passed};
       }
 
+#if __cpp_multidimensional_subscript >= 202211L
       template <class T>
          requires std::convertible_to<T, bool>
       constexpr auto operator[](T&& test_passed,
@@ -340,6 +341,14 @@ namespace ut
       {
          return log{eval<detail::fatal>{test_passed, loc}.passed};
       }
+#else
+      template <class T>
+         requires std::convertible_to<T, bool>
+      constexpr auto operator[](T&& test_passed) const
+      {
+         return log{eval<detail::fatal>{test_passed, std::source_location::current()}.passed};
+      }
+#endif
 
      private:
       struct log final

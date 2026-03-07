@@ -49,7 +49,7 @@ UT_RUN="[test1,test2,test3]" ./my_tests
 ### Requirements
 
 - C++23
-- CMake 4.2
+- CMake 3.31
 
 ## Example
 

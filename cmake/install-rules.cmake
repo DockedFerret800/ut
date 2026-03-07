@@ -18,7 +18,7 @@ if(UT_ENABLE_MODULES)
       TARGETS ${PROJECT_NAME}_${PROJECT_NAME}
       EXPORT ${PROJECT_NAME}Targets
       FILE_SET modules DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-      CXX_MODULES_BMI DESTINATION ""
+      CXX_MODULES_BMI DESTINATION "" # BMIs are not portable; suppress installation
       COMPONENT ${PROJECT_NAME}_Development
   )
 else()

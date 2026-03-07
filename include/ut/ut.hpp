@@ -333,7 +333,7 @@ namespace ut
          return log{eval<not detail::fatal>{test_passed, loc}.passed};
       }
 
-#if __cpp_multidimensional_subscript >= 202211L
+#if __cpp_multidimensional_subscript >= 202211L && !defined(_MSC_VER)
       template <class T>
          requires std::convertible_to<T, bool>
       constexpr auto operator[](T&& test_passed,

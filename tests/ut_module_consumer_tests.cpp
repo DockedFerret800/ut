@@ -1,14 +1,7 @@
-// Tests for UT_RUN environment variable filtering feature
-// This file is used by CTest to verify the UT_RUN functionality
-#ifndef UT_ENABLE_MODULES
-#include "ut/ut.hpp"
-#else
 import ut;
-#endif
 
 using namespace ut;
 
-// Define exactly 5 tests with known names for predictable testing
 suite filter_tests = [] {
    "alpha"_test = [] { expect(true); };
 
@@ -20,5 +13,4 @@ suite filter_tests = [] {
 
    test("epsilon test") = [] { expect(true); };
 };
-
 int main() {}

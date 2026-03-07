@@ -10,15 +10,9 @@
 //   Single test:    UT_RUN="my test" ./my_tests
 //   Multiple tests: UT_RUN="[test1,test2,test3]" ./my_tests
 //   If UT_RUN is not set, all tests run (default behavior).
+export module ut;
 
-#pragma once
-
-#include <concepts>
-#include <cstdint>
-#include <cstdlib>
-#include <iostream>
-#include <source_location>
-#include <string_view>
+import std;
 
 namespace ut
 {
@@ -42,12 +36,12 @@ namespace ut
       };
    }
 
-   template <size_t Size>
+   export template <std::size_t Size>
    struct fixed_string
    {
       constexpr fixed_string(const char (&str)[Size])
       {
-         for (size_t i = 0; i < Size; ++i) {
+         for (std::size_t i = 0; i < Size; ++i) {
             storage[i] = str[i];
          }
       }
@@ -69,14 +63,14 @@ namespace ut
       struct test_begin
       {
          std::string_view file_name{};
-         uint_least32_t line{};
+         std::uint_least32_t line{};
          std::string_view name{};
       };
       template <mode Mode>
       struct test_end
       {
          std::string_view file_name{};
-         uint_least32_t line{};
+         std::uint_least32_t line{};
          std::string_view name{};
          enum { FAILED, PASSED, COMPILE_TIME } result{};
       };
@@ -84,7 +78,7 @@ namespace ut
       {
          bool passed{};
          std::string_view file_name{};
-         uint_least32_t line{};
+         std::uint_least32_t line{};
       };
       struct fatal
       {};
@@ -97,8 +91,8 @@ namespace ut
       struct summary
       {
          enum { FAILED, PASSED, COMPILE_TIME };
-         size_t asserts[2]{}; /* FAILED, PASSED */
-         size_t tests[3]{}; /* FAILED, PASSED, COMPILE_TIME */
+         std::size_t asserts[2]{}; /* FAILED, PASSED */
+         std::size_t tests[3]{}; /* FAILED, PASSED, COMPILE_TIME */
       };
    } // namespace events
 
@@ -161,7 +155,7 @@ namespace ut
       char initial_new_line{};
    };
 
-   template <class Outputter, uint32_t MaxDepth = 16>
+   template <class Outputter, std::uint32_t MaxDepth = 16>
    struct reporter
    {
       constexpr auto on(const events::test_begin<events::mode::run_time>& event)
@@ -210,15 +204,15 @@ namespace ut
 
       Outputter& outputter;
       events::summary summary{};
-      size_t asserts_failed[MaxDepth]{};
-      size_t current{};
+      std::size_t asserts_failed[MaxDepth]{};
+      std::size_t current{};
    };
 
    template <class Reporter>
    struct runner
    {
       template <class Test>
-      constexpr auto on(Test test, const std::string_view file_name, uint_least32_t line, const std::string_view name)
+      constexpr auto on(Test test, const std::string_view file_name, std::uint_least32_t line, const std::string_view name)
          -> bool
       {
          if (std::is_constant_evaluated()) {
@@ -242,7 +236,7 @@ namespace ut
                // Array format: [test1,test2,test3]
                if (f.starts_with('[') && f.ends_with(']')) {
                   auto content = f.substr(1, f.size() - 2);
-                  size_t pos = 0;
+                  std::size_t pos = 0;
                   while (pos < content.size()) {
                      auto comma = content.find(',', pos);
                      auto token =
@@ -284,9 +278,9 @@ namespace ut
 
 namespace ut
 {
-   inline struct
+   struct cfg_t
    {
-      struct
+      struct stream_t
       {
          friend constexpr decltype(auto) operator<<([[maybe_unused]] auto& os, [[maybe_unused]] const auto& t)
          {
@@ -294,12 +288,15 @@ namespace ut
             return (std::clog << t);
          }
       } stream;
-      ut::outputter<decltype(stream)> outputter{stream};
+      ut::outputter<stream_t> outputter{stream};
       ut::reporter<decltype(outputter)> reporter{outputter};
       ut::runner<decltype(reporter)> runner{reporter};
-   } cfg;
+   };
 
-   constexpr struct
+   export extern cfg_t cfg;
+   cfg_t cfg{};
+
+   struct expect_fn final
    {
       template <bool Fatal>
       struct eval final
@@ -333,7 +330,6 @@ namespace ut
          return log{eval<not detail::fatal>{test_passed, loc}.passed};
       }
 
-#if __cpp_multidimensional_subscript >= 202211L && !defined(_MSC_VER)
       template <class T>
          requires std::convertible_to<T, bool>
       constexpr auto operator[](T&& test_passed,
@@ -341,14 +337,6 @@ namespace ut
       {
          return log{eval<detail::fatal>{test_passed, loc}.passed};
       }
-#else
-      template <class T>
-         requires std::convertible_to<T, bool>
-      constexpr auto operator[](T&& test_passed) const
-      {
-         return log{eval<detail::fatal>{test_passed, std::source_location::current()}.passed};
-      }
-#endif
 
      private:
       struct log final
@@ -362,16 +350,18 @@ namespace ut
             return *this;
          }
       };
-   } expect{};
+   };
 
-   struct suite final
+   export inline constexpr expect_fn expect{};
+
+   export struct suite final
    {
       suite(auto&& tests) { tests(); }
    };
 
    namespace detail
    {
-      template <fixed_string Name>
+      export template <fixed_string Name>
       struct test final
       {
          constexpr auto operator=(auto test) const
@@ -381,7 +371,7 @@ namespace ut
          }
       };
 
-      struct runtime_test final
+      export struct runtime_test final
       {
          std::string_view name{};
 
@@ -393,16 +383,16 @@ namespace ut
       };
    }
 
-   constexpr auto test(const std::string_view name) { return detail::runtime_test{name}; }
+   export constexpr auto test(const std::string_view name) { return detail::runtime_test{name}; }
 
-   template <fixed_string Str>
+   export template <fixed_string Str>
    [[nodiscard]] constexpr auto operator""_test()
    {
       return detail::test<Str>{};
    }
 
 #if __cpp_exceptions
-   template <class Callable, class... Args>
+   export template <class Callable, class... Args>
    constexpr auto throws(Callable&& c, Args&&... args)
    {
       try {
@@ -416,4 +406,4 @@ namespace ut
 #endif
 }
 
-using ut::operator""_test;
+export using ut::operator""_test;

@@ -1,40 +1,76 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.31) # Raise to 4.3 on availability global release and availability in CI/CD
+
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444") # Should be removed after 4.3 is released
 
 include(cmake/prelude.cmake)
 
 project(
-    ut
-    VERSION 1.1.0
-    LANGUAGES CXX
+  ut
+  VERSION 1.2.0
+  LANGUAGES CXX
 )
 
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-add_library(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE)
+option(UT_ENABLE_MODULES "Enable modules with import std" OFF)
+option(UT_COMPILE_TIME "Enable compile time features" OFF)
+
+if(UT_ENABLE_MODULES)
+  if(NOT CMAKE_GENERATOR MATCHES "Visual Studio") ## Support should be added with 4.4, todo: check when available
+    set(CMAKE_CXX_MODULE_STD 1)
+  endif()
+endif()
+
+if(UT_ENABLE_MODULES)
+  add_library(${PROJECT_NAME}_${PROJECT_NAME} STATIC)
+  set(UT_LIB_TYPE PUBLIC)
+else()
+  add_library(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE)
+  set(UT_LIB_TYPE INTERFACE)
+endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME}_${PROJECT_NAME})
 
-if (MSVC)
-   string(REGEX MATCH "\/cl(.exe)?$" matched_cl ${CMAKE_CXX_COMPILER})
-   if (matched_cl)
-      # for a C++ standards compliant preprocessor, not needed for clang-cl
-      target_compile_options(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE "/Zc:preprocessor" /GL /permissive- /Zc:lambda)
-      target_link_options(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE /LTCG /INCREMENTAL:NO)
-   endif()
+if(PROJECT_IS_TOP_LEVEL)
+  include(cmake/dev-mode.cmake)
+endif()
+
+target_compile_features(${PROJECT_NAME}_${PROJECT_NAME} ${UT_LIB_TYPE} cxx_std_23)
+
+if(UT_ENABLE_MODULES)
+  target_sources(${PROJECT_NAME}_${PROJECT_NAME}
+    PUBLIC
+      FILE_SET modules TYPE CXX_MODULES
+      BASE_DIRS "${PROJECT_SOURCE_DIR}/modules"
+      FILES
+        "${PROJECT_SOURCE_DIR}/modules/ut.ixx"
+  )
+
+  target_compile_definitions(${PROJECT_NAME}_${PROJECT_NAME} PRIVATE UT_ENABLE_MODULES)
+endif()
+
+if(UT_COMPILE_TIME)
+  target_compile_definitions(${PROJECT_NAME}_${PROJECT_NAME} ${UT_LIB_TYPE} UT_COMPILE_TIME)
+endif()
+
+if(MSVC)
+  string(REGEX MATCH "\/cl(.exe)?$" matched_cl ${CMAKE_CXX_COMPILER})
+  if(matched_cl)
+    # for a C++ standards compliant preprocessor, not needed for clang-cl
+    target_compile_options(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE "/Zc:preprocessor" /GL /permissive- /Zc:lambda)
+    target_link_options(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE /LTCG /INCREMENTAL:NO)
+  endif()
 endif()
 
 set_property(TARGET ${PROJECT_NAME}_${PROJECT_NAME} PROPERTY EXPORT_NAME ${PROJECT_NAME})
 
-target_compile_features(${PROJECT_NAME}_${PROJECT_NAME} INTERFACE cxx_std_23)
 target_include_directories(
-   ${PROJECT_NAME}_${PROJECT_NAME} ${warning_guard}
-    INTERFACE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+  ${PROJECT_NAME}_${PROJECT_NAME} ${warning_guard}
+  INTERFACE
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>"
 )
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(cmake/install-rules.cmake)
-endif()
-
-if (PROJECT_IS_TOP_LEVEL)
-  include(cmake/dev-mode.cmake)
 endif()

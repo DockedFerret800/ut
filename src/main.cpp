@@ -1,11 +1,14 @@
-#define UT_COMPILE_TIME
-
-#include "ut/ut.hpp"
-
-using namespace ut;
-
+#ifndef UT_ENABLE_MODULES
 #include <exception>
 #include <string_view>
+
+#include "ut/ut.hpp"
+#else
+import ut;
+import std;
+#endif
+
+using namespace ut;
 
 suite tests = [] {
    "double"_test = [] {

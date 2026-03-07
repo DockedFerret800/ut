@@ -1,7 +1,3 @@
-if(PROJECT_IS_TOP_LEVEL)
-  set(CMAKE_INSTALL_INCLUDEDIR include/${PROJECT_NAME} CACHE PATH "")
-endif()
-
 # Project is configured with no languages, so tell GNUInstallDirs the lib dir
 set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "")
 
@@ -17,11 +13,21 @@ install(
     COMPONENT ${PROJECT_NAME}_Development
 )
 
-install(
-    TARGETS ${PROJECT_NAME}_${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}Targets
-    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
+if(UT_ENABLE_MODULES)
+  install(
+      TARGETS ${PROJECT_NAME}_${PROJECT_NAME}
+      EXPORT ${PROJECT_NAME}Targets
+      FILE_SET modules DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+      CXX_MODULES_BMI DESTINATION "" # BMIs are not portable; suppress installation
+      COMPONENT ${PROJECT_NAME}_Development
+  )
+else()
+  install(
+      TARGETS ${PROJECT_NAME}_${PROJECT_NAME}
+      EXPORT ${PROJECT_NAME}Targets
+      COMPONENT ${PROJECT_NAME}_Development
+  )
+endif()
 
 write_basic_package_version_file(
     "${package}ConfigVersion.cmake"
@@ -53,6 +59,7 @@ install(
     EXPORT ${PROJECT_NAME}Targets
     NAMESPACE ${PROJECT_NAME}::
     DESTINATION "${zb8_INSTALL_CMAKEDIR}"
+    CXX_MODULES_DIRECTORY modules
     COMPONENT ${PROJECT_NAME}_Development
 )
 

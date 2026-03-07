@@ -12,11 +12,27 @@ A simple and fast compiling unit test library.
 
 ### Features
 
-- Single header
+#### Single header
 
-To enable compile time testing you must define the macro: `UT_COMPILE_TIME`
+To enable compile time testing, set the option `UT_COMPILE_TIME` to ON. For example:
+```cmake
+set(UT_COMPILE_TIME ON)
+```
 
 Runtime testing is always enabled.
+
+#### Modules support
+
+The library supports C++ 20/23 modules. To enable, set the option `UT_ENABLE_MODULES` to ON. For example:
+```cmake
+set (UT_ENABLE_MODULES ON)
+```
+You can then import the library:
+```cpp
+import ut;
+```
+
+Please note that modules integration requires compiler and build tools that support `import std`.
 
 ### Running Specific Tests
 
@@ -33,6 +49,7 @@ UT_RUN="[test1,test2,test3]" ./my_tests
 ### Requirements
 
 - C++23
+- CMake 3.31
 
 ## Example
 

@@ -1,0 +1,55 @@
+name: Build & Test with modules
+
+on: 
+    push:   
+        branches:
+        - main
+    pull_request:
+        branches:
+        - main
+    workflow_dispatch:
+    release:
+        types: [published]
+
+jobs:
+  build:
+    name: ${{ matrix.runs_on }}-${{ matrix.compiler }}-${{ matrix.configure_preset }}
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs_on: windows-2025-vs2026
+            compiler: msvc-14.50
+            configure_preset: "x64-vs"
+            build_preset: "x64-vs-build"
+            test_preset : "x64-vs-test"
+          # To be uncommented  once GitHub Actions add GCC 15 or 16 with Ubuntu 26
+          # - runs_on: ubuntu-latest
+          #  compiler: gcc-15
+          # configure_preset: "linux-debug"
+          # build_preset: "linux-debug-build"
+          # test_preset : "linux-debug-test"
+          # - runs_on: ubuntu-latest
+          # compiler: clang-18
+          # cc: clang
+          # cxx: clang++
+          # configure_preset: "linux-debug"
+          # build_preset: "linux-debug-build"
+          # test_preset : "linux-debug-test"
+    steps:
+
+    - uses: actions/checkout@v6
+    
+    - uses: lukka/get-cmake@latest
+  
+    - name: "Build & Test"
+      uses: lukka/run-cmake@v10
+      env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+      with:
+        configurePreset: ${{ matrix.configure_preset }}
+        configurePresetAdditionalArgs: "['-DUT_ENABLE_MODULES=ON']"
+        buildPreset: ${{ matrix.build_preset }}
+        testPreset: ${{ matrix.test_preset }}

@@ -1,0 +1,132 @@
+{
+  "version": 9,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 31,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64",
+      "displayName": "x64",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment.",
+      "inherits": "windows-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-base-preview",
+      "description": "Base preset for MSVC v14.51",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "toolset": {
+        "value": "v145,host=x64,version=14.51"
+      }
+    },
+    {
+      "name": "x64-preview",
+      "displayName": "x64 Debug (MSVC v14.51 Preview)",
+      "inherits": "windows-base-preview",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-vs-base",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-vs",
+      "displayName": "x64 (VS generator)",
+      "inherits": "windows-vs-base",
+      "architecture": "x64"
+    },
+    {
+      "name": "linux-debug",
+      "displayName": "Linux Debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "x64-build",
+      "configurePreset": "x64"
+    },
+    {
+      "name": "x64-vs-build",
+      "configurePreset": "x64-vs",
+      "configuration": "Debug"
+    },
+    {
+      "name": "x64-preview-build",
+      "configurePreset": "x64-preview"
+    },
+    {
+      "name": "linux-debug-build",
+      "configurePreset": "linux-debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "x64-test",
+      "configurePreset": "x64"
+    },
+    
+    {
+      "name": "x64-vs-test",
+      "configurePreset": "x64-vs",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "x64-preview-test",
+      "configurePreset": "x64-preview"
+    },
+    {
+      "name": "linux-debug-test",
+      "configurePreset": "linux-debug"
+    }
+  ]
+}
